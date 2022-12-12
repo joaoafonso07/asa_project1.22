@@ -1,0 +1,6 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory '/home/mbenjamim/LEIC/2A/1S/2T/ASA/Projeto/asa_project1.22'
+make: Leaving directory '/home/mbenjamim/LEIC/2A/1S/2T/ASA/Projeto/asa_project1.22'
+ 
+make: *** No targets specified and no makefile found.  Stop.
+
