@@ -68,26 +68,27 @@ point next_exp_pt(short c[], short n){
 }
 
 
-void tilling_numb(short c[], short n){
+long tilling_numb(short c[], short n){
     point p = next_exp_pt(c, n);
+    int result_tn = 0;
     if(p.x == 0){
-        result++;
-        return;
+        result_tn++;
+        return result_tn;
     }
     short m = max_tile(c, p);
     while (m > 0){
         short* c1 =  (short*)malloc(n * sizeof(short));
         memcpy(c1, c, n*sizeof(short));
         if (c1 == NULL)
-                return;
+                return -1;
 
         short *c2 = remove_tile(c1, m, p, n);
-        tilling_numb(c2, n);
+        result_tn += tilling_numb(c2, n);
         free(c1);
         m--;
     }
     
-    return;
+    return result_tn;
 }
 
 
@@ -108,7 +109,7 @@ int main() {
             empty = false;
     }
     if(!empty){
-        tilling_numb(c, n);
+        result = tilling_numb(c, n);
     }else
         result = 0;
 
