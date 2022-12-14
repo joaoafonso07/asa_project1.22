@@ -54,6 +54,10 @@ point next_exp_pt(short c[], short n){
         return exp_pt; 
     }
     for(short i = n - 1; i >= 0; i--) {
+        if(i == 0){
+            c[i] = c[1];
+            return next_exp_pt(c, n);
+        }
         if(c[i] == m){
             exp_pt.x = m;
             exp_pt.y = i + 1;
@@ -89,6 +93,7 @@ void tilling_numb(short c[], short n){
 
 int main() {
     short n, m; //n = number of lines, m = number of columns 
+    bool empty = true;
     if(scanf("%hu", &n) == -1)
         return -1;
     if(scanf("%hu", &m) == -1)
@@ -99,9 +104,14 @@ int main() {
    for(short i = 0; i < n; i++){ // for each i less than n add the ci to the array
         if(scanf("%hu", &c[i]) == -1)
             return -1;
+        if(empty == true && c[i] != 0)
+            empty = false;
     }
-    
-    tilling_numb(c, n);
+    if(!empty){
+        tilling_numb(c, n);
+    }else
+        result = 0;
+
     cout << result << "\n";
     return 0;
 }
