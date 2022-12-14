@@ -3,6 +3,8 @@
 #include <iostream>
 #include <algorithm>
 #include <cstring>
+#include <vector>
+#include <unordered_map>
 
 using namespace std;
 
@@ -11,12 +13,10 @@ typedef struct{
     short y; //vertical
 }point;
 
-long result = 0;
+short max_tile (vector <short> c, point p);
+point next_exp_pt(vector <short> c, short n);
 
-short max_tile (short c[], point p);
-point next_exp_pt(short c[], short n);
-
-short max_func(short c[], short n){
+short max_func(vector <short> c, short n){
     short max = 0;
     for(short i = 0; i < n ; i++){
         if (c[i] > max)
@@ -25,8 +25,19 @@ short max_func(short c[], short n){
     return max;
 }
 
+struct vector_hasher {
+    int operator()(const vector<short> &V) const {
+        int hash = V.size();
+        for(auto &i : V) {
+            hash ^= i + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+        }
+        return hash;
+    }
+};
 
-short max_tile(short c[], point p){
+unordered_map<vector<short>, long, vector_hasher> map;
+
+short max_tile(vector <short> c, point p){
     short tiles_above = 0, i = p.y-1;
     while(i >= 0){
         if (c[i] < p.x)
@@ -37,7 +48,7 @@ short max_tile(short c[], point p){
     return min(p.x, tiles_above);
 }
 
-short *remove_tile(short c[], short m, point p, short n){ //m*m tile
+vector<short> remove_tile(vector<short> c, short m, point p, short n){ //m*m tile
     short i = p.y-1;
     while(i>=p.y - m){
         c[i] -= m;
@@ -46,7 +57,7 @@ short *remove_tile(short c[], short m, point p, short n){ //m*m tile
     return c;
 }
 
-point next_exp_pt(short c[], short n){
+point next_exp_pt(vector <short> c, short n){
     point exp_pt;
     short m = max_func(c, n);
     if (m <= 1){ 
@@ -68,7 +79,10 @@ point next_exp_pt(short c[], short n){
 }
 
 
-long tilling_numb(short c[], short n){
+long tilling_numb(vector <short> c, short n){
+    if(map.find(c) != map.end())
+        return map[c];
+    
     point p = next_exp_pt(c, n);
     int result_tn = 0;
     if(p.x == 0){
@@ -77,34 +91,31 @@ long tilling_numb(short c[], short n){
     }
     short m = max_tile(c, p);
     while (m > 0){
-        short* c1 =  (short*)malloc(n * sizeof(short));
-        memcpy(c1, c, n*sizeof(short));
-        if (c1 == NULL)
-                return -1;
-
-        short *c2 = remove_tile(c1, m, p, n);
+        vector <short> c1 = c;
+       
+        vector <short> c2 = remove_tile(c1, m, p, n);
         result_tn += tilling_numb(c2, n);
-        free(c1);
         m--;
     }
-    
+    map[c] = result_tn;
     return result_tn;
 }
 
 
 int main() {
-    short n, m; //n = number of lines, m = number of columns 
+    short n, m, add; //n = number of lines, m = number of columns 
+    long result;
     bool empty = true;
     if(scanf("%hu", &n) == -1)
         return -1;
     if(scanf("%hu", &m) == -1)
         return -1;
-    short c[n]; //array with n ci's
-    
-    
-   for(short i = 0; i < n; i++){ // for each i less than n add the ci to the array
-        if(scanf("%hu", &c[i]) == -1)
+
+    std::vector<short> c; //array with n ci's
+    for(short i = 0; i < n; i++){ // for each i less than n add the ci to the array
+        if(scanf("%hu", &add) != 1)
             return -1;
+        c.push_back(add);
         if(empty == true && c[i] != 0)
             empty = false;
     }
