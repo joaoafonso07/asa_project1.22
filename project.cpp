@@ -49,6 +49,10 @@ short *remove_tile(short c[], short m, point p, short n){ //m*m tile
 point next_exp_pt(short c[], short n){
     point exp_pt;
     short m = max_func(c, n);
+    if (m <= 1){ 
+        exp_pt.x = 0;
+        return exp_pt; 
+    }
     for(short i = n - 1; i >= 0; i--) {
         if(c[i] == m){
             exp_pt.x = m;
