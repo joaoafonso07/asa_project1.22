@@ -3,6 +3,8 @@
 #include <iostream>
 #include <algorithm>
 #include <cstring>
+#include <unordered_map>
+
 
 using namespace std;
 
@@ -11,7 +13,17 @@ typedef struct{
     short y; //vertical
 }point;
 
-long result = 0;
+unordered_map<vector<short>, long, vector_hasher> map;
+
+struct vector_hasher {
+    int operator()(const vector<short> &V) const {
+        int hash = V.size();
+        for(auto &i : V) {
+            hash ^= i + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+        }
+        return hash;
+    }
+};
 
 short max_tile (short c[], point p);
 point next_exp_pt(short c[], short n);
@@ -68,26 +80,30 @@ point next_exp_pt(short c[], short n){
 }
 
 
-void tilling_numb(short c[], short n){
+long tilling_numb(short c[], short n){
+    if (map.find(c) != map.end())
+        return map[c];
     point p = next_exp_pt(c, n);
+    int result_tn = 0;
     if(p.x == 0){
-        result++;
-        return;
+        result_tn++;
+        map[c] = result_tn;
+        return result_tn;
     }
     short m = max_tile(c, p);
     while (m > 0){
         short* c1 =  (short*)malloc(n * sizeof(short));
         memcpy(c1, c, n*sizeof(short));
         if (c1 == NULL)
-                return;
+                return -1;
 
         short *c2 = remove_tile(c1, m, p, n);
-        tilling_numb(c2, n);
+        result_tn += tilling_numb(c2, n);
         free(c1);
         m--;
     }
-    
-    return;
+    map[c] = result_tn;      
+    return result_tn;
 }
 
 
@@ -107,8 +123,10 @@ int main() {
         if(empty == true && c[i] != 0)
             empty = false;
     }
+    int result;
+
     if(!empty){
-        tilling_numb(c, n);
+        result = tilling_numb(c, n);
     }else
         result = 0;
 
