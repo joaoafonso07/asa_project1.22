@@ -40,8 +40,9 @@ int max_tile(int c[], point p){
 
 int *remove_tile(int c[], int m, point p, int n){ //m*m tile
     int i = p.y-1;
-    for (i; i>=p.y - m; i--){
+    while(i>=p.y - m){
         c[i] -= m;
+        i--;
     }
     return c;
 }
@@ -61,29 +62,22 @@ point next_exp_pt(int c[], int n){
 
 
 void tilling_numb(int c[], int n){
-    int c_1 = c[0];
-    int c_2 = c[1];
-    int c_3 = c[2];
     point p = next_exp_pt(c, n);
     if(p.x == 0){
         result++;
         return;
     }
     int m = max_tile(c, p);
-    for (m; m > 0; m--){
+    while (m > 0){
         int* c1 =  (int*)malloc(n * sizeof(int));
         memcpy(c1, c, n*sizeof(int));
         if (c1 == NULL)
                 return;
 
         int *c2 = remove_tile(c1, m, p, n);
-
-        for (int j = 0; j < n; j++){
-        printf("%d", c2[j]);
-        }
-        printf("\n");
         tilling_numb(c2, n);
         free(c1);
+        m--;
     }
     
     return;
@@ -92,13 +86,16 @@ void tilling_numb(int c[], int n){
 
 int main() {
     int n, m; //n = number of lines, m = number of columns 
-    scanf("%i", &n);
-    scanf("%i", &m);
+    if(scanf("%i", &n) == -1)
+        return -1;
+    if(scanf("%i", &m) == -1)
+        return -1;
     int c[n]; //array with n ci's
     
     
    for(int i = 0; i < n; i++){ // for each i less than n add the ci to the array
-        scanf("%d", &c[i]);
+        if(scanf("%d", &c[i]) == -1)
+            return -1;
     }
     /*
     point start = next_exp_pt(c, n);
