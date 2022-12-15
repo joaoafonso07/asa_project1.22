@@ -84,7 +84,7 @@ long tilling_numb(vector <short> c, short n){
         return map[c];
     
     point p = next_exp_pt(c, n);
-    int result_tn = 0;
+    unsigned long long result_tn = 0;
     if(p.x == 0){
         result_tn++;
         return result_tn;
@@ -104,7 +104,7 @@ long tilling_numb(vector <short> c, short n){
 
 int main() {
     short n, m, add; //n = number of lines, m = number of columns 
-    long result;
+    unsigned long long result;
     bool empty = true;
     if(scanf("%hu", &n) == -1)
         return -1;
